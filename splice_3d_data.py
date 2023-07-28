@@ -49,13 +49,20 @@ mediapipe_markers = [
 ]
 
 dlc_markers = [
-'right_hip',
+'right_hip',    
 'right_knee',
 'right_ankle',
 'right_heel',
 'right_foot_index',
 ]
 
+
+markers_to_splice = [
+'right_knee',
+'right_ankle',
+'right_heel',
+'right_foot_index',
+]
 
 class MainWindow(QMainWindow):
     def __init__(self, data_3d):
@@ -139,14 +146,15 @@ data_freemocap = np.load(file_manager.path_to_3d_freemocap_data)
 
 spliced_data = data_freemocap.copy()
 
-for dlc_marker in dlc_markers:
-    mediapipe_marker_index = mediapipe_markers.index(dlc_marker)
-    spliced_data[:, mediapipe_marker_index, :] = data_dlc[:, dlc_markers.index(dlc_marker), :]
+for marker in markers_to_splice:
+    mediapipe_marker_index = mediapipe_markers.index(marker)
+    dlc_marker_index = dlc_markers.index(marker)
+    spliced_data[:, mediapipe_marker_index, :] = data_dlc[:, dlc_marker_index, :]
   
 app = QApplication([])
 win = MainWindow(spliced_data)
 win.show()
 app.exec()
 
-np.save(path_to_recording_folder / 'output_data' / 'freemocap_spliced.npy', spliced_data)
+# np.save(path_to_recording_folder / 'output_data' / 'raw_data' / 'freemocap_spliced.npy', spliced_data)
 
