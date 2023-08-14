@@ -18,7 +18,7 @@ def apply_confidence_threshold(array, threshold):
 
 # Path to your csv folder
 path_to_folder_with_csvs = Path(r'C:\Users\aaron\Desktop\JH_DLC_model-Aaron-2023-07-03\videos')
-path_to_save = Path(r'D:\2023-06-07_JH\1.0_recordings\treadmill_calib\sesh_2023-06-07_12_06_15_JH_flexion_neutral_trial_1\output_data\raw_datav')
+path_to_save = Path(r'D:\2023-06-07_JH\1.0_recordings\treadmill_calib\sesh_2023-06-07_12_06_15_JH_flexion_neutral_trial_1\output_data\raw_data')
 # Filtered csv list
 filtered_csv_list = sorted(list(path_to_folder_with_csvs.glob('*filtered*.csv')))
 
