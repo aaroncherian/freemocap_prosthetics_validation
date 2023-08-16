@@ -105,7 +105,7 @@ def split_and_export_data(skel3d_frame_marker_xyz, path_to_recording_folder, pat
 
 
 if __name__ == "__main__":
-    path_to_recording_folder = Path(r'D:\2023-06-07_JH\1.0_recordings\treadmill_calib\sesh_2023-06-07_12_06_15_JH_flexion_neutral_trial_1')
+    path_to_recording_folder = Path(r'D:\2023-06-07_JH\1.0_recordings\treadmill_calib\sesh_2023-06-07_12_03_15_JH_flexion_neg_2_8_trial_1')
     path_to_np_array = path_to_recording_folder/'output_data'/'mediapipe_postprocessed_3d_xyz.npy'
     path_to_folder_where_we_will_save_this_data = path_to_recording_folder/'output_data'
 

@@ -1,5 +1,6 @@
 import numpy as np
 from pathlib import Path
+from typing import Union 
 
 def save_skeleton_array_to_npy(
     array_to_save: np.ndarray, skeleton_file_name: str, path_to_folder_where_we_will_save_this_data: Union[str, Path]

@@ -15,17 +15,31 @@ class FileManager:
         np.save(self.path_to_save_3d_data, data_3d)
 
 path_to_calibration_toml = Path(r'D:\2023-06-07_JH\1.0_recordings\treadmill_calib\sesh_2023-06-07_11_10_50_treadmill_calibration_01\sesh_2023-06-07_11_10_50_treadmill_calibration_01_camera_calibration.toml')
-path_to_recording_folder = Path(r'D:\2023-06-07_JH\1.0_recordings\treadmill_calib\sesh_2023-06-07_12_06_15_JH_flexion_neutral_trial_1')
-file_manager = FileManager(path_to_recording_folder)
-dlc_2d_data = file_manager.load_2d_joint_data()
+path_to_recording_folder = Path(r'D:\2023-06-07_JH\1.0_recordings\treadmill_calib\sesh_2023-06-07_12_03_15_JH_flexion_neg_2_8_trial_1')
 
-thresholded_dlc_2d_Data = threshold_2d_data.apply_confidence_threshold(array=dlc_2d_data, threshold=0.7)
 
-reconstructed_data_holder = ReconstructedDataHolder(calibration_toml_path=path_to_calibration_toml, joint_data=thresholded_dlc_2d_Data[:,:,:,:2])
+def reconstruct_dlc_data_from_paths(path_to_recording_folder, path_to_calibration_toml):
+    #older function that uses paths to load data instead of passing the 2d data directly as a npy array 
+    file_manager = FileManager(path_to_recording_folder)
+    dlc_2d_data = file_manager.load_2d_joint_data()
 
-dlc_data_3d = reconstructed_data_holder.reconstruct_3d_data()
+    thresholded_dlc_2d_Data = threshold_2d_data.apply_confidence_threshold(array=dlc_2d_data, threshold=0.7)
 
-file_manager.save_3d_joint_data(dlc_data_3d)
+    reconstructed_data_holder = ReconstructedDataHolder(calibration_toml_path=path_to_calibration_toml, joint_data=thresholded_dlc_2d_Data[:,:,:,:2])
 
+    dlc_data_3d = reconstructed_data_holder.reconstruct_3d_data()
+
+    # return dlc_data_3d
+    file_manager.save_3d_joint_data(dlc_data_3d)
+
+
+def reconstruct_dlc_data(data_2d:np.ndarray, path_to_calibration_toml):
+    thresholded_dlc_2d_Data = threshold_2d_data.apply_confidence_threshold(array=data_2d, threshold=0.7)
+
+    reconstructed_data_holder = ReconstructedDataHolder(calibration_toml_path=path_to_calibration_toml, joint_data=thresholded_dlc_2d_Data[:,:,:,:2])
+
+    dlc_data_3d = reconstructed_data_holder.reconstruct_3d_data()
+
+    return dlc_data_3d
 
 f = 2 

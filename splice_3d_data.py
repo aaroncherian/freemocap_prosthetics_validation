@@ -137,24 +137,40 @@ class ScatterPlot3DWidget(QWidget):
         # Redraw the plot
         self.canvas.draw()
 
-path_to_recording_folder = Path(r'D:\2023-06-07_JH\1.0_recordings\treadmill_calib\sesh_2023-06-07_12_06_15_JH_flexion_neutral_trial_1')
+# path_to_recording_folder = Path(r'D:\2023-06-07_JH\1.0_recordings\treadmill_calib\sesh_2023-06-07_12_03_15_JH_flexion_neg_2_8_trial_1')
 
-file_manager = FileManager(path_to_recording_folder)
+# file_manager = FileManager(path_to_recording_folder)
 
-data_dlc = np.load(file_manager.path_to_3d_dlc_data)
-data_freemocap = np.load(file_manager.path_to_3d_freemocap_data)
+# data_dlc = np.load(file_manager.path_to_3d_dlc_data)
+# data_freemocap = np.load(file_manager.path_to_3d_freemocap_data)
 
-spliced_data = data_freemocap.copy()
+# spliced_data = data_freemocap.copy()
 
-for marker in markers_to_splice:
-    mediapipe_marker_index = mediapipe_markers.index(marker)
-    dlc_marker_index = dlc_markers.index(marker)
-    spliced_data[:, mediapipe_marker_index, :] = data_dlc[:, dlc_marker_index, :]
+# for marker in markers_to_splice:
+#     mediapipe_marker_index = mediapipe_markers.index(marker)
+#     dlc_marker_index = dlc_markers.index(marker)
+#     spliced_data[:, mediapipe_marker_index, :] = data_dlc[:, dlc_marker_index, :]
   
-app = QApplication([])
-win = MainWindow(spliced_data)
-win.show()
-app.exec()
+# app = QApplication([])
+# win = MainWindow(spliced_data)
+# win.show()
+# app.exec()
 
 # np.save(path_to_recording_folder / 'output_data' / 'raw_data' / 'freemocap_spliced.npy', spliced_data)
 
+
+def splice_freemocap_and_dlc_leg_data(dlc_3d_data, freemocap_3d_data, show_graph = False):
+    spliced_data = freemocap_3d_data.copy()
+        
+    for marker in markers_to_splice:
+        mediapipe_marker_index = mediapipe_markers.index(marker)
+        dlc_marker_index = dlc_markers.index(marker)
+        spliced_data[:, mediapipe_marker_index, :] = dlc_3d_data[:, dlc_marker_index, :]
+
+    if show_graph:
+        app = QApplication([])
+        win = MainWindow(spliced_data)
+        win.show()
+        app.exec()
+
+    return spliced_data
