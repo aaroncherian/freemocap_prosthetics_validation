@@ -43,6 +43,7 @@ def save_skeleton_array_to_npy(
 
 
 def split_and_export_data(skel3d_frame_marker_xyz, path_to_recording_folder, path_to_folder_where_we_will_save_this_data):
+    path_to_folder_where_we_will_save_this_data.mkdir(parents=True, exist_ok=True)
     save_skeleton_array_to_npy(
         array_to_save=skel3d_frame_marker_xyz,
         skeleton_file_name="mediaPipeSkel_3d_body_hands_face.npy",
