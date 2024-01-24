@@ -1,0 +1,5 @@
+
+*.pyc
+*.pyc
+__pycache__/splice_3d_data.cpython-310.pyc
+__pycache__/convert_and_export_spliced_data.cpython-310.pyc
