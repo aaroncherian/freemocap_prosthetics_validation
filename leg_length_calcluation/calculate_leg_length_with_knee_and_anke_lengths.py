@@ -29,7 +29,7 @@ def calculate_segment_lengths(leg_joint_positions: LegJointPositions):
 
 hip_index = mediapipe_indices.index('right_hip')
 knee_index = mediapipe_indices.index('right_knee')
-ankle_index = mediapipe_indices.index('right_heel')
+ankle_index = mediapipe_indices.index('right_ankle')
 
 mean_leg_lengths = []
 
@@ -122,7 +122,7 @@ from qualisys_joint import qualisys_markers
 
 hip_index = qualisys_markers.index('right_hip')
 knee_index = qualisys_markers.index('right_knee')
-ankle_index = qualisys_markers.index('right_heel')
+ankle_index = qualisys_markers.index('right_ankle')
 
 mean_leg_lengths = []
 
@@ -169,7 +169,7 @@ for i, session in enumerate(list_of_sessions):
     # Plot total leg length, hip-knee, and knee-ankle lengths over time in subplots (column)
     axs_line[i].plot(leg_lengths, label='Total Leg Length')
     axs_line[i].plot(hip_knee_lengths, label='Hip-Knee Length')
-    axs_line[i].plot(knee_ankle_lengths, label='Knee-Ankle Length')
+    axs_line[i].plot(knee_ankle_lengths, label='Knee-Heel Length')
     axs_line[i].set_title(f'{session}')
     axs_line[i].set_xlabel('Frame')
     axs_line[i].set_ylabel('Length')

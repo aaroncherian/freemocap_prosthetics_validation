@@ -22,11 +22,11 @@ def calculate_leg_length(leg_joint_positions: LegJointPositions):
 # Indices for hip, knee, and ankle joints
 hip_index_mediapipe = mediapipe_indices.index('right_hip')
 knee_index_mediapipe = mediapipe_indices.index('right_knee')
-ankle_index_mediapipe = mediapipe_indices.index('right_heel')
+ankle_index_mediapipe = mediapipe_indices.index('right_ankle')
 
 hip_index_qualisys = qualisys_markers.index('right_hip')
 knee_index_qualisys = qualisys_markers.index('right_knee')
-ankle_index_qualisys = qualisys_markers.index('right_heel')
+ankle_index_qualisys = qualisys_markers.index('right_ankle')
 
 # Path to recording folder
 path_to_recording_folder = Path(r'D:\2023-06-07_TF01\1.0_recordings\treadmill_calib')
@@ -47,7 +47,7 @@ trial_labels = []
 # Load data and calculate leg lengths for both FreeMoCap and Qualisys
 for trial_name, session in zip(trial_names, list_of_sessions):
     # Load FreeMoCap data
-    freemocap_data_path = path_to_recording_folder / session / 'output_data' / 'mediaPipeSkel_3d_body_hands_face.npy'
+    freemocap_data_path = path_to_recording_folder / session / 'mediapipe_yolo_dlc_output_data' / 'mediaPipeSkel_3d_body_hands_face.npy'
     freemocap_data = np.load(freemocap_data_path)[:, :, :33]  # Assuming the first 33 columns are body data
 
 

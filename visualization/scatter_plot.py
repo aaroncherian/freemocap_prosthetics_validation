@@ -53,9 +53,9 @@ class ScatterPlot3DWidget(QWidget):
 
         # Axis range
         self.ax_range = 900
-        self.mean_x = np.nanmean(data_3d[:, 0:33, 0])
-        self.mean_y = np.nanmean(data_3d[:, 0:33, 1])
-        self.mean_z = np.nanmean(data_3d[:, 0:33, 2])
+        self.mean_x = np.nanmean(data_3d[:, :, 0])
+        self.mean_y = np.nanmean(data_3d[:, :, 1])
+        self.mean_z = np.nanmean(data_3d[:, :, 2])
 
     def update_plot(self, value):
         # Clear the current plot
@@ -65,7 +65,7 @@ class ScatterPlot3DWidget(QWidget):
         self.frame_label.setText(f"Frame {value}")
 
         # Get the data for the selected frame
-        frame_data = self.data_3d[value, 0:33, :]
+        frame_data = self.data_3d[value, :, :]
 
         # Update the scatter plot with the new data
         self.ax.scatter(frame_data[:, 0], frame_data[:, 1], frame_data[:, 2])
@@ -81,9 +81,13 @@ class ScatterPlot3DWidget(QWidget):
 
 if __name__ == '__main__':
 
-    path_to_spliced_data = r"D:\2023-06-07_JH\1.0_recordings\treadmill_calib\sesh_2023-06-07_12_46_54_JH_leg_length_neutral_trial_1\output_data\mediapipe_body_3d_xyz.npy"
+    path_to_spliced_data = r"D:\steen_pantsOn_gait_3_cameras\output_data\raw_data\openpose3dData_numFrames_numTrackedPoints_spatialXYZ.npy"
 
+    # spliced_data = np.load(path_to_spliced_data)
+    # path_to_spliced_data  = r'D:\steen_pantsOn_gait_3_cameras\output_data\raw_data\mediapipe3dData_numFrames_numTrackedPoints_spatialXYZ.npy'
     spliced_data = np.load(path_to_spliced_data)
+
+
 
     app = QApplication([])
     win = MainWindow(spliced_data)

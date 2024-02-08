@@ -31,4 +31,6 @@ def process_session_folder(session_folder):
                 process_recording_folder(recording_folder)
 
 if __name__ == '__main__':
-    process_session_folder(r'D:\2023-06-07_JH\1.0_recordings\treadmill_calib')
+    # process_session_folder(r'D:\2023-06-07_JH\1.0_recordings\treadmill_calib')
+
+    process_recording_folder(r'D:\2023-06-07_TF01\1.0_recordings\overground_calib\sesh_2023-06-07_10_47_15_TF01_overground_trial_001')

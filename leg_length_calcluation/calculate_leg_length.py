@@ -17,18 +17,14 @@ class LegJointPositions:
     ankle: np.ndarray
 
 def calculate_leg_length(leg_joint_positions: LegJointPositions):
-    hip = leg_joint_positions.hip
-    knee = leg_joint_positions.knee
-    ankle = leg_joint_positions.ankle
-
-    # Calculate distances between hip-knee and knee-ankle
-    leg_length = np.linalg.norm(knee - hip) + np.linalg.norm(ankle - knee)
-    return leg_length
+    hip_knee_length = np.linalg.norm(leg_joint_positions.knee - leg_joint_positions.hip)
+    knee_ankle_length = np.linalg.norm(leg_joint_positions.ankle - leg_joint_positions.knee)
+    return hip_knee_length + knee_ankle_length
 
 
 hip_index = mediapipe_indices.index('right_hip')
 knee_index = mediapipe_indices.index('right_knee')
-ankle_index = mediapipe_indices.index('right_heel')
+ankle_index = mediapipe_indices.index('right_ankle')
 
 mean_leg_lengths = []
 
@@ -46,9 +42,9 @@ gs = fig.add_gridspec(n_sessions, 2)
 axs_line = [fig.add_subplot(gs[i, 0]) for i in range(n_sessions)]
 
 for i, session in enumerate(list_of_sessions):
-    session_path = path_to_recording_folder / session / 'output_data' / 'mediaPipeSkel_3d_body_hands_face.npy'
+    session_path = path_to_recording_folder / session / 'mediapipe_output_data' / 'mediaPipeSkel_3d_body_hands_face.npy'
     body_data = np.load(session_path)
-    body_data = body_data[:,:, :]  # Remove the face and hand data
+    body_data = body_data[400:,:, :]  # Remove the face and hand data
 
     leg_lengths = []
     for frame_data in body_data:

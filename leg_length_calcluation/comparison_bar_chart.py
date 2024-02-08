@@ -15,18 +15,19 @@ class LegJointPositions:
 
 # Function to calculate leg length
 def calculate_leg_length(leg_joint_positions: LegJointPositions):
-    hip_knee_length = np.linalg.norm(leg_joint_positions.knee - leg_joint_positions.hip)
+    # hip_knee_length = np.linalg.norm(leg_joint_positions.knee - leg_joint_positions.hip)
+    hip_knee_length = 0
     knee_ankle_length = np.linalg.norm(leg_joint_positions.ankle - leg_joint_positions.knee)
     return hip_knee_length + knee_ankle_length
 
 # Indices for hip, knee, and ankle joints
 hip_index_mediapipe = mediapipe_indices.index('right_hip')
 knee_index_mediapipe = mediapipe_indices.index('right_knee')
-ankle_index_mediapipe = mediapipe_indices.index('right_heel')
+ankle_index_mediapipe = mediapipe_indices.index('right_ankle')
 
 hip_index_qualisys = qualisys_markers.index('right_hip')
 knee_index_qualisys = qualisys_markers.index('right_knee')
-ankle_index_qualisys = qualisys_markers.index('right_heel')
+ankle_index_qualisys = qualisys_markers.index('right_ankle')
 
 # Path to recording folder
 path_to_recording_folder = Path(r'D:\2023-06-07_TF01\1.0_recordings\treadmill_calib')
@@ -84,14 +85,26 @@ neutral_index = trial_names.index('0mm')
 qualisys_deltas = []
 freemocap_deltas = []
 
+std_dev_qualisys = []
+std_dev_freemocap = []
+
+
+std_dev_qualisys_deltas = []
+std_dev_freemocap_deltas = []
+
 # Load neutral lengths for both systems
-neutral_freemocap_data_path = path_to_recording_folder / list_of_sessions[neutral_index] / 'output_data' / 'mediaPipeSkel_3d_body_hands_face.npy'
-neutral_freemocap_data = np.load(neutral_freemocap_data_path)[:, :, :33]
+neutral_freemocap_data_path = path_to_recording_folder / list_of_sessions[neutral_index] / 'mediapipe_yolo_dlc_output_data' / 'mediaPipeSkel_3d_body_hands_face.npy'
+neutral_freemocap_data = np.load(neutral_freemocap_data_path)[400:, :, :33]
 neutral_freemocap_leg_length = np.mean([calculate_leg_length(LegJointPositions(frame[hip_index_mediapipe], frame[knee_index_mediapipe], frame[ankle_index_mediapipe])) for frame in neutral_freemocap_data])
+std_dev_neutral_freemocap = np.std([calculate_leg_length(LegJointPositions(frame[hip_index_mediapipe], frame[knee_index_mediapipe], frame[ankle_index_mediapipe])) for frame in neutral_freemocap_data])
+
+
 
 neutral_qualisys_data_path = path_to_recording_folder / list_of_sessions[neutral_index] / 'qualisys_data' / 'qualisys_joint_centers_3d_xyz.npy'
-neutral_qualisys_data = np.load(neutral_qualisys_data_path)
+neutral_qualisys_data = np.load(neutral_qualisys_data_path)[400:,:,:]
 neutral_qualisys_leg_length = np.mean([calculate_leg_length(LegJointPositions(frame[hip_index_qualisys], frame[knee_index_qualisys], frame[ankle_index_qualisys])) for frame in neutral_qualisys_data])
+std_dev_neutral_qualisys = np.std([calculate_leg_length(LegJointPositions(frame[hip_index_qualisys], frame[knee_index_qualisys], frame[ankle_index_qualisys])) for frame in neutral_qualisys_data])
+
 
 # Calculate deltas for both systems
 for i, session in enumerate(list_of_sessions):
@@ -101,24 +114,51 @@ for i, session in enumerate(list_of_sessions):
 
     # FreeMoCap data
     freemocap_data_path = path_to_recording_folder / session / 'output_data' / 'mediaPipeSkel_3d_body_hands_face.npy'
-    freemocap_data = np.load(freemocap_data_path)[:, :, :33]
+    freemocap_data = np.load(freemocap_data_path)[400:, :, :33]
     mean_freemocap_leg_length = np.nanmean([calculate_leg_length(LegJointPositions(frame[hip_index_mediapipe], frame[knee_index_mediapipe], frame[ankle_index_mediapipe])) for frame in freemocap_data])
     freemocap_deltas.append(mean_freemocap_leg_length - neutral_freemocap_leg_length)
+    std_dev_freemocap.append(np.nanstd([calculate_leg_length(LegJointPositions(frame[hip_index_mediapipe], frame[knee_index_mediapipe], frame[ankle_index_mediapipe])) for frame in freemocap_data]))
 
     # Qualisys data
     qualisys_data_path = path_to_recording_folder / session / 'qualisys_data' / 'qualisys_joint_centers_3d_xyz.npy'
-    qualisys_data = np.load(qualisys_data_path)
+    qualisys_data = np.load(qualisys_data_path)[400:,:,:]
     mean_qualisys_leg_length = np.nanmean([calculate_leg_length(LegJointPositions(frame[hip_index_qualisys], frame[knee_index_qualisys], frame[ankle_index_qualisys])) for frame in qualisys_data])
     qualisys_deltas.append(mean_qualisys_leg_length - neutral_qualisys_leg_length)
+    std_dev_qualisys.append(np.nanstd([calculate_leg_length(LegJointPositions(frame[hip_index_qualisys], frame[knee_index_qualisys], frame[ankle_index_qualisys])) for frame in qualisys_data]))
+
+    std_dev_session_qualisys = np.nanstd([calculate_leg_length(LegJointPositions(frame[hip_index_qualisys], frame[knee_index_qualisys], frame[ankle_index_qualisys])) for frame in qualisys_data])
+    std_dev_session_freemocap = np.nanstd([calculate_leg_length(LegJointPositions(frame[hip_index_mediapipe], frame[knee_index_mediapipe], frame[ankle_index_mediapipe])) for frame in freemocap_data])
+
+    # Error propagation for the difference of means
+    std_dev_delta_qualisys = np.sqrt(std_dev_session_qualisys**2 + std_dev_neutral_qualisys**2)
+    std_dev_delta_freemocap = np.sqrt(std_dev_session_freemocap**2 + std_dev_neutral_freemocap**2)
+
+    std_dev_qualisys_deltas.append(std_dev_delta_qualisys)
+    std_dev_freemocap_deltas.append(std_dev_delta_freemocap)
+
 
 # Plot the deltas
 fig, ax = plt.subplots(figsize=(10, 6))
 bar_width = 0.25
 index = np.arange(len(expected_deltas))
 
-bar1 = ax.bar(index, expected_deltas, bar_width, label='Expected', color = 'black')
-bar2 = ax.bar(index + bar_width, qualisys_deltas, bar_width, label='Qualisys', color = 'C1')
-bar3 = ax.bar(index + 2 * bar_width, freemocap_deltas, bar_width, label='FreeMoCap', color = 'C0')
+bar1 = ax.bar(index, expected_deltas, bar_width, label='Expected', color='black')
+bar2 = ax.bar(index + bar_width, qualisys_deltas, bar_width, label='Qualisys', color='C1', yerr=std_dev_qualisys_deltas, capsize=5)
+bar3 = ax.bar(index + 2 * bar_width, freemocap_deltas, bar_width, label='FreeMoCap', color='C0', yerr=std_dev_freemocap_deltas, capsize=5)
+
+# Annotating the value of each bar
+def annotate_bars(bars):
+    for bar in bars:
+        height = bar.get_height()
+        ax.annotate('{}'.format(round(height, 2)),
+                    xy=(bar.get_x() + bar.get_width() / 2, height),
+                    xytext=(0, 3),  # 3 points vertical offset
+                    textcoords="offset points",
+                    ha='center', va='bottom')
+
+annotate_bars(bar1)
+annotate_bars(bar2)
+annotate_bars(bar3)
 
 ax.set_xlabel('Trial')
 ax.set_ylabel('Delta Leg Length (mm)')
