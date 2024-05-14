@@ -81,11 +81,11 @@ class ScatterPlot3DWidget(QWidget):
 
 if __name__ == '__main__':
 
-    path_to_spliced_data = r"D:\steen_pantsOn_gait_3_cameras\output_data\raw_data\openpose3dData_numFrames_numTrackedPoints_spatialXYZ.npy"
+    path_to_spliced_data = r"D:\steen_pantsOn_gait_3_cameras\output_data\mediapipe_postprocessed_3d_xyz.npy"
 
     # spliced_data = np.load(path_to_spliced_data)
     # path_to_spliced_data  = r'D:\steen_pantsOn_gait_3_cameras\output_data\raw_data\mediapipe3dData_numFrames_numTrackedPoints_spatialXYZ.npy'
-    spliced_data = np.load(path_to_spliced_data)
+    spliced_data = np.load(path_to_spliced_data)[:,0:25,:]
 
 
 

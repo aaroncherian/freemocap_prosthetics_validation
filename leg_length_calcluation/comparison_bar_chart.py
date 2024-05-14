@@ -15,8 +15,8 @@ class LegJointPositions:
 
 # Function to calculate leg length
 def calculate_leg_length(leg_joint_positions: LegJointPositions):
-    # hip_knee_length = np.linalg.norm(leg_joint_positions.knee - leg_joint_positions.hip)
-    hip_knee_length = 0
+    hip_knee_length = np.linalg.norm(leg_joint_positions.knee - leg_joint_positions.hip)
+    # hip_knee_length = 0
     knee_ankle_length = np.linalg.norm(leg_joint_positions.ankle - leg_joint_positions.knee)
     return hip_knee_length + knee_ankle_length
 
@@ -93,8 +93,8 @@ std_dev_qualisys_deltas = []
 std_dev_freemocap_deltas = []
 
 # Load neutral lengths for both systems
-neutral_freemocap_data_path = path_to_recording_folder / list_of_sessions[neutral_index] / 'mediapipe_yolo_dlc_output_data' / 'mediaPipeSkel_3d_body_hands_face.npy'
-neutral_freemocap_data = np.load(neutral_freemocap_data_path)[400:, :, :33]
+neutral_freemocap_data_path = path_to_recording_folder / list_of_sessions[neutral_index] / 'rigid_mediapipe_dlc_output_data' / 'mediapipe_body_3d_xyz.npy'
+neutral_freemocap_data = np.load(neutral_freemocap_data_path)[400:, :, :]
 neutral_freemocap_leg_length = np.mean([calculate_leg_length(LegJointPositions(frame[hip_index_mediapipe], frame[knee_index_mediapipe], frame[ankle_index_mediapipe])) for frame in neutral_freemocap_data])
 std_dev_neutral_freemocap = np.std([calculate_leg_length(LegJointPositions(frame[hip_index_mediapipe], frame[knee_index_mediapipe], frame[ankle_index_mediapipe])) for frame in neutral_freemocap_data])
 
@@ -113,8 +113,8 @@ for i, session in enumerate(list_of_sessions):
         continue
 
     # FreeMoCap data
-    freemocap_data_path = path_to_recording_folder / session / 'output_data' / 'mediaPipeSkel_3d_body_hands_face.npy'
-    freemocap_data = np.load(freemocap_data_path)[400:, :, :33]
+    freemocap_data_path = path_to_recording_folder / session / 'rigid_mediapipe_dlc_output_data' / 'mediapipe_body_3d_xyz.npy'
+    freemocap_data = np.load(freemocap_data_path)[400:, :, :]
     mean_freemocap_leg_length = np.nanmean([calculate_leg_length(LegJointPositions(frame[hip_index_mediapipe], frame[knee_index_mediapipe], frame[ankle_index_mediapipe])) for frame in freemocap_data])
     freemocap_deltas.append(mean_freemocap_leg_length - neutral_freemocap_leg_length)
     std_dev_freemocap.append(np.nanstd([calculate_leg_length(LegJointPositions(frame[hip_index_mediapipe], frame[knee_index_mediapipe], frame[ankle_index_mediapipe])) for frame in freemocap_data]))
